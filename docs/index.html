@@ -2,11 +2,31 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>排程展示</title>
+  <title>今日排程</title>
+  <style>
+    table { width:100%; border-collapse: collapse; }
+    th, td { border:1px solid #ccc; padding:8px; text-align:left; }
+    th { background:#f4f4f4; }
+  </style>
 </head>
 <body>
-  <h1>今日排程（Console 試驗）</h1>
-  <div id="app"></div>
+  <h1>今日排程</h1>
+  <table id="schedule-table">
+    <thead>
+      <tr>
+        <th>線別</th>
+        <th>通路</th>
+        <th>品項</th>
+        <th>人數</th>
+        <th>開始</th>
+        <th>預估結束</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- JavaScript 會把每一筆資料塞到這裡 -->
+    </tbody>
+  </table>
+
   <script src="script.js"></script>
 </body>
 </html>
