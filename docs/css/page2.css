@@ -1,0 +1,171 @@
+/* 📦 外層排版：4 欄排卡片 */
+.schedule-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 10px 0;
+}
+
+/* 🧱 每條產線的卡片列 */
+.schedule-col {
+  width: calc((100% - 60px) / 4);
+  min-width: 280px;
+  max-width: 420px;
+  background-color: #fff;
+  border: 1px solid #bbb;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  position: relative;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.schedule-col:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  border-color: #0d6efd;
+}
+.schedule-col h5 {
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  z-index: 10;
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  border-bottom: 2px solid #ccc;
+}
+
+/* 🧩 單一卡片樣式 */
+.list-group-item {
+  background: #ffffff;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 16px;
+  padding: 16px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.list-group-item:hover {
+  background-color: #e8f1fc; /* 更明顯的淺藍背景 */
+  transform: translateY(-3px) scale(1.01); /* 微浮起＋放大 */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+.list-group-item.locked {
+  background-color: #e0e0e0 !important;
+  border: 1px solid #b0b0b0;
+}
+
+/* ⠿ 拖曳圖示 */
+.cursor-move {
+  font-size: 1.25rem;
+  color: #adb5bd;
+}
+
+/* 🏷️ 品項標題 + 盒數（並排） */
+.title-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.title-line .fs-5 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #212529;
+}
+.title-line .piece {
+  font-size: 0.95rem;
+  color: #495057;
+}
+
+/* 📋 備註區塊 */
+.note-block {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-top: 10px;
+  font-size: 0.85rem;
+}
+.note-block .label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6c757d;
+  border-bottom: 1px solid #dee2e6;
+  margin-bottom: 4px;
+}
+.note-block .content {
+  white-space: pre-line;
+  font-size: 1.2rem;
+  color: #343a40;
+}
+
+/* ⏱️ 時間區塊 */
+.time-block {
+  background-color: #eef3f9;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-top: 12px;
+  font-size: 0.85rem;
+}
+.time-block .label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #495057;
+  text-align: center;
+  margin-bottom: 6px;
+}
+.time-block strong {
+  font-size: 1.05rem;
+}
+
+/* 🛠️ 編輯與展示按鈕 */
+.card-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  margin-top: 12px;
+  justify-content: flex-end;
+}
+.card-buttons button {
+  flex: 1;
+  min-width: 70px;
+}
+
+/* ✅ 已結束標籤 */
+.badge.bg-secondary {
+  font-size: 0.75rem;
+  padding: 5px 8px;
+}
+
+
+.custom-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  z-index: 9999;
+  display: none;
+  font-size: 0.9rem;
+}
+
+/* 📱 響應式排版 */
+@media (max-width: 1200px) {
+  .schedule-col {
+    flex: 1 1 calc(33.33% - 20px);
+  }
+}
+@media (max-width: 992px) {
+  .schedule-col {
+    flex: 1 1 calc(50% - 20px);
+  }
+}
+@media (max-width: 768px) {
+  .schedule-col {
+    flex: 1 1 100%;
+  }
+}
