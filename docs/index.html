@@ -1,32 +1,131 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
-  <meta charset="UTF-8" />
-  <title>今日排程</title>
-  <style>
-    table { width:100%; border-collapse: collapse; }
-    th, td { border:1px solid #ccc; padding:8px; text-align:left; }
-    th { background:#f4f4f4; }
-  </style>
-</head>
-<body>
-  <h1>今日排程</h1>
-  <table id="schedule-table">
-    <thead>
-      <tr>
-        <th>線別</th>
-        <th>通路</th>
-        <th>品項</th>
-        <th>人數</th>
-        <th>開始</th>
-        <th>預估結束</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- JavaScript 會把每一筆資料塞到這裡 -->
-    </tbody>
-  </table>
+  <meta charset="UTF-8">
+  <title>排程排序系統</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-  <script src="script.js"></script>
-</body>
+  <!-- 加入自訂CSS -->
+  <link rel="stylesheet" href="css/page2.css">
+</head>
+
+<!-- 🧩 通用：新增/編輯 排程 Modal -->
+<div class="modal fade" id="scheduleModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle">排程操作</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <!-- 手動 KEY-IN 勾選，只在「新增」模式顯示 -->
+        <div class="form-check mb-3" id="manualKeyInContainer" style="display:none;">
+          <input class="form-check-input" type="checkbox" id="manualKeyInChk">
+          <label class="form-check-label" for="manualKeyInChk">手動 KEY-IN</label>
+        </div>
+
+        <input type="hidden" id="modalMode">
+        <input type="hidden" id="modalOrderId">
+
+        <div class="row g-3">
+          <!-- 排程日期 -->
+          <div class="col-md-6">
+            <label class="form-label">排程日期</label>
+            <input type="date" class="form-control" id="modalDate">
+          </div>
+          <!-- 線別 -->
+          <div class="col-md-6">
+            <label class="form-label">線別</label>
+            <input type="text" class="form-control" id="modalLine">
+          </div>
+          <!-- 通路 select + input -->
+          <div class="col-md-6">
+            <label class="form-label">通路</label>
+            <select class="form-select" id="modalChannel"><option value="">請選擇</option></select>
+            <input type="text" class="form-control d-none" id="modalChannelInput" placeholder="請輸入通路">
+          </div>
+          <!-- 品項 select + input -->
+          <div class="col-md-6">
+            <label class="form-label">品項</label>
+            <select class="form-select" id="modalItem"><option value="">請選擇</option></select>
+            <input type="text" class="form-control d-none" id="modalItemInput" placeholder="請輸入品項">
+          </div>
+          <!-- 人數 select + input -->
+          <div class="col-md-6">
+            <label class="form-label">人數</label>
+            <select class="form-select" id="modalPeople"><option value="">請選擇</option></select>
+            <input type="number" class="form-control d-none" id="modalPeopleInput" placeholder="請輸入人數" min="0">
+          </div>
+          <!-- 新人數 -->
+          <div class="col-md-6">
+            <label class="form-label">新人數</label>
+            <input type="number" class="form-control" id="modalNewguy" min="0">
+          </div>
+          <!-- 盒數 -->
+          <div class="col-md-6">
+            <label class="form-label">盒數</label>
+            <input type="number" class="form-control" id="modalPieces" min="0">
+          </div>
+          <!-- 所需工時 -->
+          <div class="col-md-6">
+            <label class="form-label">所需工時</label>
+            <div class="input-group">
+              <input type="number" class="form-control" id="modalWorkHoursInput" min="0" placeholder="小時">
+              <span class="input-group-text">時</span>
+              <input type="number" class="form-control" id="modalWorkMinutesInput" min="0" max="59" placeholder="分鐘">
+              <span class="input-group-text">分</span>
+            </div>
+            <small class="form-text text-info d-none" id="modalWorkInfo"></small>
+          </div>
+          <!-- 備註 -->
+          <div class="col-12">
+            <label class="form-label">備註</label>
+            <textarea class="form-control" id="modalNote" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="modalSaveBtn">💾 儲存</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<body>
+  <div class="container-fluid py-4">
+    <h3>📅 排程排序管理</h3>
+
+    <!-- 日期選擇器 -->
+    <div class="mb-3 row align-items-end">
+      <div class="col-md-6">
+        <label for="scheduleDate" class="form-label">選擇排程日期：</label>
+        <input type="date" class="form-control" id="scheduleDate">
+      </div>
+      <div class="col-md-6">
+        <span><button class="btn btn-success mt-4" id="addScheduleBtn">➕ 增加排程</button></span>
+        <span><a id="toShowBtn" class="btn btn-success mt-4" href="#">👉 排程展示XX</a></span>
+        <span><button class="btn btn-secondary mt-4 ms-2" id="refreshBtn">🔄 立即刷新</button></span>
+      </div>
+      
+    </div>
+
+    <!-- 多線別欄區塊 -->
+    <div id="scheduleLines" class="schedule-wrapper"></div>
+  </div>
+
+  
+
+  <!-- JS Script -->
+  <!-- 載入你的 Script -->
+  <?!= include('page2-utils'); ?>
+  <?!= include('page2-schedule'); ?>
+  <?!= include('page2-modal'); ?>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>
